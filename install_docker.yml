@@ -1,0 +1,141 @@
+---
+- name: install k8s basic for both of master and nodes
+  hosts: all
+  become: yes
+  vars:
+    - ansible_python_interpreter:  '/usr/bin/python3'
+  vars_files:
+    - vars/host_attributes.yml
+  tasks:
+    - name: swap imformation
+      debug:
+        msg: swap size "{{ ansible_swaptotal_mb }}"
+    - name: disable swap
+      shell: |
+        swapoff -a && sed -i '/swap/ s/^\(.*\)$/#\1/g' /etc/fstab
+      when: ansible_swaptotal_mb != 0
+    - name: update packages
+      apt:
+        name: '*'
+        state: latest
+    - name: install docker
+      apt:
+        name: docker.io
+        state: present
+    - name: host files
+      template:
+        src: templates/hostsfile.j2
+        dest: /etc/hosts
+    - name: make dir for k8s key
+      file:
+        path: /usr/share/keyrings
+        state: directory
+        mode: '0755'
+    - name: check k8s repo key is exists
+      stat:
+        path: /usr/share/keyrings/kubernetes-archive-keyring.gpg
+      register: stat_k8s_key
+    - name: update key
+      uri:
+        dest: /usr/share/keyrings/kubernetes-archive-keyring.gpg
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      when: stat_k8s_key['stat']['exists'] == false
+    - name: check k8s repo source.list is exists
+      stat:
+        path: /etc/apt/sources.list.d/apt_kubernetes_io.list
+      register: stat_k8s_apt_source
+    - name: update repo.d file
+      block:
+         - apt_repository:
+             repo: deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main
+             state: present
+#           when: stat_k8s_apt_source['stat']['exists'] == true
+      rescue:
+        - name: copy repo file
+          copy:
+            src: files/k8s.repo
+            dest: /etc/apt/sources.list.d/kubernetes.list
+          when: stat_k8s_apt_source['stat']['exists'] == false
+        - name: module failed, update repo by shell
+          shell: |
+            apt -y update
+    - name: install k8s tools
+      apt:
+        name:
+          - iptables
+          - arptables
+          - "apt-transport-https"
+          - curl
+          - kubelet
+          - kubeadm
+          - kubectl
+    - name: update k8s configurations
+      lineinfile:
+        path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+        line: Environment="cgroup-driver=systemd/cgroup-driver=cgroupfs"
+        state: present
+    - name: check docker daemon config is existed
+      stat:
+        path: /etc/docker/daemon.json
+      register: stat_docker_daemon
+    - name: copy docker config
+      copy:
+        src: files/docker_dameon.json
+        dest: /etc/docker/daemon.json
+        mode: "0644"
+        owner: root
+        group: root
+      when: stat_docker_daemon['stat']['exists'] == false
+    - name: restart docker service
+      service:
+        name: docker
+        enabled: yes
+        state: restarted
+- name: config master
+  hosts: k8s_master
+  become: yes
+  tasks:
+    - name: create .kube dir
+      file:
+        state: directory
+        path: ~/.kube
+        mode: '0755'
+    - name: init control plane
+      shell: |
+        kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address={{ ansible_default_ipv4.address }} > ~/kubeadm.res
+    - name: cp admin.conf to .kube dir
+      shell: |
+        cp /etc/kubernetes/admin.conf ~/.kube/config
+    - name: create kubeadm.sh
+      shell: |
+        echo '#!/bin/bash' > ~/kubeadm.sh
+    - name: process kubeadm.res
+      shell: |
+        grep -e 'kubeadm' -e '--discovery-token-ca-cert-hash' ~/kubeadm.res | sed 's/ *$//g' >> ~/kubeadm.sh
+    - name: fetch kubeadm.sh from k8s-master
+      fetch:
+        src: ~/kubeadm.sh
+        dest: ./
+        flat: yes
+- name: config workers
+  hosts: k8s_nodes
+  become: yes
+  tasks:
+    - name: copy the join CMD
+      copy:
+        src: kubeadm.sh
+        dest: ~/kubeadm.sh
+    - name: change mode of kubeadm.sh
+      file:
+        path: ~/kubeadm.sh
+        mode: '0777'
+    - name: join the cluster
+      shell: |
+        ~/kubeadm.sh
+- name: install CNI (weave net)
+  hosts: k8s_master
+  become: yes
+  tasks:
+    - name: install weave net
+      shell: |
+        kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
