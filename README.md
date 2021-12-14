@@ -1,2 +1,1 @@
-# k8s-cluster
-create cluster
+Creating kubernetes cluster(1 master node & multi worker nodes).
