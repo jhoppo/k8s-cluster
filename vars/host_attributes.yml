@@ -1,9 +1,0 @@
-atts:
-  - ip: 192.168.0.112
-    name: "k8s-worker1"
-  - ip: 192.168.0.113
-    name: "k8s-worker2"
-  - ip: 192.168.0.110
-    name: "k8s-master"
-  - ip: 192.168.0.114
-    name: "k8s-worker3"
