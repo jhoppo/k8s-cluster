@@ -1,5 +1,5 @@
 # Creating kubernetes cluster
-- **1 master node & multi worker nodes**
+- **Single head node, multiple workers**
 - **Practice on Ubuntu 18**
 ## usage:
 - create cluster
