@@ -1,6 +1,9 @@
 # Creating kubernetes cluster
 - **Single head node, multiple workers**
 - **Practice on Ubuntu 18**
+## vars:
+- file: vars/vars
+  - cidr: cluster cidr, default 10.244.0.0/16
 ## usage:
 - create cluster
 ```
