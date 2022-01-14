@@ -5,7 +5,7 @@
   vars:
     - ansible_python_interpreter:  '/usr/bin/python3'
   vars_files:
-    - vars/host_attributes.yml
+    - vars/vars.yaml
   tasks:
     - name: swap imformation
       debug:
@@ -102,7 +102,7 @@
         mode: '0755'
     - name: init control plane
       shell: |
-        kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address={{ ansible_default_ipv4.address }} > ~/kubeadm.res
+        kubeadm init --pod-network-cidr={{ pod_network_cidr }} --apiserver-advertise-address={{ ansible_default_ipv4.address }} > ~/kubeadm.res
     - name: cp admin.conf to .kube dir
       shell: |
         cp /etc/kubernetes/admin.conf ~/.kube/config
