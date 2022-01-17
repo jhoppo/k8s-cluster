@@ -113,7 +113,8 @@
 #        cp /etc/kubernetes/admin.conf {{ ansible_facts['env']['HOME'] }}/.kube/config
     - name: cp admin.conf to user's home dir
       copy:
-        remote_src: /etc/kubernetes/admin.conf
+        remote_src: yes
+        src: /etc/kubernetes/admin.conf
         dest: "{{ ansible_facts['env']['HOME'] }}/.kube/config"
         owner: "{{ ansible_facts['env']['USER'] }}"
         group: "{{ ansible_facts['effective_group_id'] }}"
