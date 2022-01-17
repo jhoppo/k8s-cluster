@@ -151,7 +151,7 @@
     - ansible_python_interpreter:  '/usr/bin/python3'
   tasks:
     - name: join the cluster
-      command: "{{ ansible_facts['env']['HOME'] }}/kubeadm.sh"
+      command: "{{ ansible_facts['env']['PWD'] }}/kubeadm.sh"
 - name: remove files
   hosts: all
   vars:
