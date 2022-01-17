@@ -137,7 +137,7 @@
   hosts: k8s_nodes
   vars:
     - ansible_python_interpreter:  '/usr/bin/python3'
-  become: no
+  become: yes
   tasks:
     - name: copy the join CMD
       copy:
