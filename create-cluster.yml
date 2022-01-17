@@ -137,7 +137,6 @@
   hosts: k8s_nodes
   vars:
     - ansible_python_interpreter:  '/usr/bin/python3'
-  become: yes
   tasks:
     - name: copy the join CMD
       copy:
@@ -145,8 +144,7 @@
         dest: "{{ ansible_facts['env']['HOME'] }}/kubeadm.sh"
         mode: '0777'
     - name: join the cluster
-      shell: |
-        "bash {{ ansible_facts['env']['HOME'] }}/kubeadm.sh"
+      command: sudo {{ ansible_facts['env']['HOME'] }}/kubeadm.sh
 - name: install CNI (weave net)
   hosts: k8s_master
   vars:
