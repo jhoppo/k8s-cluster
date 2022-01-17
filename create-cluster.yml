@@ -142,14 +142,11 @@
     - name: copy the join CMD
       copy:
         src: kubeadm.sh
-        dest: ~/kubeadm.sh
-    - name: change mode of kubeadm.sh
-      file:
-        path: ~/kubeadm.sh
+        dest: "{{ ansible_facts['env']['HOME'] }}/kubeadm.sh"
         mode: '0777'
     - name: join the cluster
       shell: |
-        ~/kubeadm.sh
+        "{{ ansible_facts['env']['HOME'] }}/kubeadm.sh"
 - name: install CNI (weave net)
   hosts: k8s_master
   vars:
