@@ -146,7 +146,7 @@
         mode: '0777'
     - name: join the cluster
       shell: |
-        "{{ ansible_facts['env']['HOME'] }}/kubeadm.sh"
+        "bash {{ ansible_facts['env']['HOME'] }}/kubeadm.sh"
 - name: install CNI (weave net)
   hosts: k8s_master
   vars:
