@@ -114,7 +114,7 @@
     - name: cp admin.conf to user's home dir
       copy:
         remote_src: /etc/kubernetes/admin.conf
-        dest: {{ ansible_facts['env']['HOME'] }}/.kube/config
+        dest: "{{ ansible_facts['env']['HOME'] }}/.kube/config"
         owner: "{{ ansible_facts['env']['USER'] }}"
         group: "{{ ansible_facts['effective_group_id'] }}"
     - name: create kubeadm.sh
@@ -125,7 +125,7 @@
         grep -e 'kubeadm' -e '--discovery-token-ca-cert-hash' ~/kubeadm.res | sed 's/ *$//g' >> {{ ansible_facts['env']['HOME'] }}/kubeadm.sh
     - name: fetch kubeadm.sh from k8s-master
       fetch:
-        src: {{ ansible_facts['env']['HOME'] }}/kubeadm.sh
+        src: "{{ ansible_facts['env']['HOME'] }}/kubeadm.sh"
         dest: ./
         flat: yes
 - name: config workers
