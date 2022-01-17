@@ -116,7 +116,7 @@
         remote_src: /etc/kubernetes/admin.conf
         dest: {{ ansible_facts['env']['HOME'] }}/.kube/config
         owner: "{{ ansible_facts['env']['USER'] }}"
-        group: "{{ ansible_facts['effective_group_id'] }}
+        group: "{{ ansible_facts['effective_group_id'] }}"
     - name: create kubeadm.sh
       shell: |
         echo '#!/bin/bash' > {{ ansible_facts['env']['HOME'] }}/kubeadm.sh
