@@ -92,6 +92,8 @@
         state: restarted
 - name: config master
   hosts: k8s_master
+  vars:
+    - ansible_python_interpreter:  '/usr/bin/python3'
   vars_files:
     - vars/vars.yaml
   become: yes
@@ -101,6 +103,8 @@
         kubeadm init --service-cidr={{ servicecidr }} --apiserver-advertise-address={{ ansible_default_ipv4.address }} > ~/kubeadm.res
 - name: config master
   hosts: k8s_master
+  vars:
+    - ansible_python_interpreter:  '/usr/bin/python3'
   become: yes
   tasks:
     - name: create .kube dir
@@ -131,6 +135,8 @@
         flat: yes
 - name: config workers
   hosts: k8s_nodes
+  vars:
+    - ansible_python_interpreter:  '/usr/bin/python3'
   become: no
   tasks:
     - name: copy the join CMD
@@ -146,6 +152,8 @@
         ~/kubeadm.sh
 - name: install CNI (weave net)
   hosts: k8s_master
+  vars:
+    - ansible_python_interpreter:  '/usr/bin/python3'
   become: yes
   tasks:
     - name: install weave net
