@@ -124,7 +124,7 @@
         echo '#!/bin/bash' > {{ ansible_facts['env']['PWD'] }}/kubeadm.sh
     - name: process kubeadm.res
       shell: |
-        grep -e 'kubeadm' -e '--discovery-token-ca-cert-hash' {{ ansible_facts['env']['PWD'] }}/kubeadm.res | sed 's/ *$//g' >> {{ ansible_facts['env']['PWD'] }}/kubeadm.sh
+        grep -e 'kubeadm' -e '--discovery-token-ca-cert-hash' {{ ansible_facts['env']['PWD'] }}/kubeadm.res | grep '^kube' | sed 's/ *$//g' >> {{ ansible_facts['env']['PWD'] }}/kubeadm.sh
     - name: fetch kubeadm.sh from k8s-master
       fetch:
         src: "{{ ansible_facts['env']['PWD'] }}/kubeadm.sh"
