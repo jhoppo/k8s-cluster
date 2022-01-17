@@ -125,6 +125,10 @@
     - name: process kubeadm.res
       shell: |
         grep -e 'kubeadm' -e '--discovery-token-ca-cert-hash' {{ ansible_facts['env']['PWD'] }}/kubeadm.res | grep '^kube' -A 1 | sed 's/ *$//g' >> {{ ansible_facts['env']['PWD'] }}/kubeadm.sh
+    - name: delete kubeadm.res
+      file:
+        path: "{{ ansible_facts['env']['PWD'] }}/kubeadm.res"
+        state: absent
     - name: fetch kubeadm.sh from k8s-master
       fetch:
         src: "{{ ansible_facts['env']['PWD'] }}/kubeadm.sh"
@@ -140,8 +144,23 @@
         src: kubeadm.sh
         dest: "{{ ansible_facts['env']['HOME'] }}/kubeadm.sh"
         mode: '0777'
+- name: JOIN CLUSTER
+  hosts: k8s_nodes
+  become: yes
+  vars:
+    - ansible_python_interpreter:  '/usr/bin/python3'
+  tasks:
     - name: join the cluster
-      command: sudo {{ ansible_facts['env']['HOME'] }}/kubeadm.sh
+      command: "{{ ansible_facts['env']['HOME'] }}/kubeadm.sh"
+- name: remove files
+  hosts: all
+  vars:
+    - ansible_python_interpreter:  '/usr/bin/python3'
+  tasks:
+    - name: remove kubeadm.sh
+      file:
+        src: "{{ ansible_facts['env']['HOME'] }}/kubeadm.sh"
+        state: absent
 - name: install CNI (weave net)
   hosts: k8s_master
   vars:
