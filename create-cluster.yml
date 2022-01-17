@@ -4,8 +4,6 @@
   become: yes
   vars:
     - ansible_python_interpreter:  '/usr/bin/python3'
-  vars_files:
-    - vars/vars.yaml
   tasks:
     - name: swap imformation
       debug:
@@ -94,6 +92,8 @@
         state: restarted
 - name: config master
   hosts: k8s_master
+  vars_files:
+    - vars/vars.yaml
   become: yes
   tasks:
     - name: init control plane
