@@ -159,7 +159,7 @@
   tasks:
     - name: remove kubeadm.sh
       file:
-        src: "{{ ansible_facts['env']['HOME'] }}/kubeadm.sh"
+        src: "{{ ansible_facts['env']['PWD'] }}/kubeadm.sh"
         state: absent
 - name: install CNI (weave net)
   hosts: k8s_master
