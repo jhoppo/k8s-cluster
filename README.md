@@ -4,7 +4,7 @@
 - **Used CNI: Weave**
 ## vars:
 - file: vars/vars
-  - cidr: cluster cidr, default 10.32.0.0/12
+  - servicecidr: cluster cidr, default 10.32.0.0/12
 ## usage:
 - create cluster
 ```
