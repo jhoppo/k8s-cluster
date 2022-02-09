@@ -1,0 +1,17 @@
+---
+- name: config master
+  hosts: k8s_master
+  become: yes
+  tasks:
+    - name: install nfs server
+      apt:
+        name: nfs-kernel-server
+        state: present
+- name: config workers
+  hosts: k8s_nodes
+  become: yes
+  tasks:
+    - name: install nfs client
+      apt:
+        name: nfs-common
+        state: present
