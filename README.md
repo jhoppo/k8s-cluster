@@ -1,6 +1,6 @@
 # Creating kubernetes cluster
 - **Single head node, multiple workers**
-- **Practice on Ubuntu 18**
+- **Practice on Ubuntu 18,21.10**
 - **Used CNI: Weave**
 ## vars:
 - file: vars/vars
