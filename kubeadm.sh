@@ -1,3 +1,3 @@
 #!/bin/bash
-kubeadm join 192.168.0.150:6443 --token oudnvn.kr8xmehscg9lk81b \
-	--discovery-token-ca-cert-hash sha256:a7cf7c5714f56d93f3e3d5322a699271c54c77a021f4b6a65995ee7009f9406e
+kubeadm join 192.168.0.150:6443 --token 8qoaa6.222mdd09mb1jgqeq \
+	--discovery-token-ca-cert-hash sha256:7c7f2dc09b9fd9e771523c0ca18857db8fe5e504da1f05170bf8a576444895e1

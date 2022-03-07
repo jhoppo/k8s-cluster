@@ -10,6 +10,8 @@
 - name: config workers
   hosts: k8s_nodes
   become: yes
+  vars:
+  - ansible_python_interpreter:  '/usr/bin/python3'
   tasks:
     - name: install nfs client
       apt:
